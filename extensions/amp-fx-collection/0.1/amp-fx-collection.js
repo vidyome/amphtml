@@ -21,6 +21,7 @@ import {
   FxType, // eslint-disable-line no-unused-vars
   getFxTypes,
 } from './fx-type';
+import {Services} from '../../../src/services';
 import {devAssert, rethrowAsync} from '../../../src/log';
 import {
   installPositionBoundFx,
@@ -47,13 +48,18 @@ export class AmpFxCollection {
     /** @private @const {!Array<!Element>} */
     this.seen_ = [];
 
-    Promise.all([ampdoc.whenReady(), ampdoc.whenFirstVisible()]).then(() => {
-      const root = this.ampdoc_.getRootNode();
-      // Scan when page becomes visible.
-      this.scan_();
-      // Rescan as DOM changes happen.
-      listen(root, AmpEvents.DOM_UPDATE, () => this.scan_());
-    });
+    /** @private @const {!../../../src/service/viewer-interface.ViewerInterface} */
+    this.viewer_ = Services.viewerForDoc(ampdoc);
+
+    Promise.all([ampdoc.whenReady(), this.viewer_.whenFirstVisible()]).then(
+      () => {
+        const root = this.ampdoc_.getRootNode();
+        // Scan when page becomes visible.
+        this.scan_();
+        // Rescan as DOM changes happen.
+        listen(root, AmpEvents.DOM_UPDATE, () => this.scan_());
+      }
+    );
   }
 
   /**
@@ -83,7 +89,7 @@ export class AmpFxCollection {
   register_(element) {
     devAssert(element.hasAttribute('amp-fx'));
     devAssert(!this.seen_.includes(element));
-    devAssert(this.ampdoc_.isVisible());
+    devAssert(this.viewer_.isVisible());
 
     getFxTypes(element).forEach(type => {
       this.install_(element, type);

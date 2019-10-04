@@ -29,11 +29,13 @@ describes.realWin('DocumentFetcher', {amp: true}, function() {
   beforeEach(() => {
     ampdocServiceForStub = sandbox.stub(Services, 'ampdocServiceFor');
     ampdocViewerStub = sandbox.stub(Services, 'viewerForDoc');
-    ampdocViewerStub.returns({});
+    ampdocViewerStub.returns({
+      whenFirstVisible: () => Promise.resolve(),
+    });
     ampdocServiceForStub.returns({
       isSingleDoc: () => false,
-      getAmpDoc: () => null,
-      getSingleDoc: () => null,
+      getAmpDoc: () => ampdocViewerStub,
+      getSingleDoc: () => ampdocViewerStub,
     });
   });
 
@@ -138,10 +140,7 @@ describes.realWin('DocumentFetcher', {amp: true}, function() {
       setupMockXhr();
       optedInDoc = window.document.implementation.createHTMLDocument('');
       optedInDoc.documentElement.setAttribute('allow-xhr-interception', '');
-      const ampdoc = {
-        getRootNode: () => optedInDoc,
-        whenFirstVisible: () => Promise.resolve(),
-      };
+      const ampdoc = {getRootNode: () => optedInDoc};
       ampdocServiceForStub.returns({
         isSingleDoc: () => true,
         getAmpDoc: () => ampdoc,

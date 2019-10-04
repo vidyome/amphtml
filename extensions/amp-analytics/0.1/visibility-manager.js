@@ -574,10 +574,13 @@ export class VisibilityManagerForDoc extends VisibilityManager {
     super(/* parent */ null, ampdoc);
 
     /** @const @private */
+    this.viewer_ = Services.viewerForDoc(ampdoc);
+
+    /** @const @private */
     this.viewport_ = Services.viewportForDoc(ampdoc);
 
     /** @private {boolean} */
-    this.backgrounded_ = !ampdoc.isVisible();
+    this.backgrounded_ = !this.viewer_.isVisible();
 
     /** @const @private {boolean} */
     this.backgroundedAtStart_ = this.isBackgrounded();
@@ -605,11 +608,11 @@ export class VisibilityManagerForDoc extends VisibilityManager {
         this.observe(rootElement, this.setRootVisibility.bind(this))
       );
     } else {
-      // Main document: visibility is based on the ampdoc.
-      this.setRootVisibility(this.ampdoc.isVisible() ? 1 : 0);
+      // Main document: visibility is based on the viewer.
+      this.setRootVisibility(this.viewer_.isVisible() ? 1 : 0);
       this.unsubscribe(
-        this.ampdoc.onVisibilityChanged(() => {
-          const isVisible = this.ampdoc.isVisible();
+        this.viewer_.onVisibilityChanged(() => {
+          const isVisible = this.viewer_.isVisible();
           if (!isVisible) {
             this.backgrounded_ = true;
           }
@@ -630,7 +633,7 @@ export class VisibilityManagerForDoc extends VisibilityManager {
 
   /** @override */
   getStartTime() {
-    return dev().assertNumber(this.ampdoc.getFirstVisibleTime());
+    return dev().assertNumber(this.viewer_.getFirstVisibleTime());
   }
 
   /** @override */

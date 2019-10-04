@@ -154,7 +154,7 @@ export class AmpDateCountdown extends AMP.BaseElement {
     /** @private {!Object|null} */
     this.localeWordList_ = this.getLocaleWord_(this.locale_);
 
-    this.getAmpDoc()
+    Services.viewerForDoc(this.getAmpDoc())
       .whenFirstVisible()
       .then(() => {
         const EPOCH = this.getEpoch_() + this.offsetSeconds_ * 1000;

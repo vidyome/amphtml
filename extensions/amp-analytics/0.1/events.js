@@ -1531,15 +1531,15 @@ export class VisibilityTracker extends EventTracker {
    * @private
    */
   createReportReadyPromiseForDocumentHidden_() {
-    const {ampdoc} = this.root;
+    const viewer = this.root.getViewer();
 
-    if (!ampdoc.isVisible()) {
+    if (!viewer.isVisible()) {
       return Promise.resolve();
     }
 
     return new Promise(resolve => {
-      ampdoc.onVisibilityChanged(() => {
-        if (!ampdoc.isVisible()) {
+      viewer.onVisibilityChanged(() => {
+        if (!viewer.isVisible()) {
           resolve();
         }
       });

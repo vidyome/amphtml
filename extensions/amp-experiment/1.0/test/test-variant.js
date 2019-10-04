@@ -75,10 +75,12 @@ describes.sandboxed('allocateVariant', {}, env => {
         })
       );
 
-    fakeViewer = {};
+    fakeViewer = {
+      getParam: () => 'true',
+    };
+    getParamStub = sandbox.stub(fakeViewer, 'getParam').returns('true');
 
     sandbox.stub(ampdoc, 'getHeadNode').returns(fakeHead);
-    getParamStub = sandbox.stub(ampdoc, 'getParam').returns('true');
   });
 
   it('should throw for invalid config', () => {

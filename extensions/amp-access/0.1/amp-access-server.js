@@ -72,6 +72,9 @@ export class AccessServerAdapter {
     /** @private @const */
     this.clientAdapter_ = new AccessClientAdapter(ampdoc, configJson, context);
 
+    /** @private @const {!../../../src/service/viewer-interface.ViewerInterface} */
+    this.viewer_ = Services.viewerForDoc(ampdoc);
+
     /** @const @protected {!../../../src/service/xhr-impl.Xhr} */
     this.xhr_ = Services.xhrFor(ampdoc.win);
 
@@ -96,7 +99,7 @@ export class AccessServerAdapter {
     this.isProxyOrigin_ = isProxyOrigin(ampdoc.win.location) || isInExperiment;
 
     const serviceUrlOverride = isInExperiment
-      ? ampdoc.getParam('serverAccessService')
+      ? this.viewer_.getParam('serverAccessService')
       : null;
 
     /** @private @const {string} */

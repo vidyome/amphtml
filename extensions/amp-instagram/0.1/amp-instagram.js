@@ -36,6 +36,7 @@
  */
 
 import {CSS} from '../../../build/amp-instagram-0.1.css';
+import {Services} from '../../../src/services';
 import {getData, listen} from '../../../src/event-helper';
 import {isLayoutSizeDefined} from '../../../src/layout';
 import {isObject} from '../../../src/types';
@@ -110,7 +111,7 @@ class AmpInstagram extends AMP.BaseElement {
 
     // This will redirect to the image URL. By experimentation this is
     // always the same URL that is actually used inside of the embed.
-    this.getAmpDoc()
+    Services.viewerForDoc(this.element)
       .whenFirstVisible()
       .then(() => {
         image.setAttribute(

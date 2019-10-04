@@ -1342,34 +1342,37 @@ describes.realWin(
 
       it('should start as visible by default', () => {
         win.AMP.attachShadowDoc(hostElement, importDoc, docUrl);
-        expect(ampdoc.getVisibilityState()).to.equal('visible');
+        const viewer = getServiceForDoc(ampdoc, 'viewer');
+        expect(viewer.getVisibilityState()).to.equal('visible');
       });
 
       it('should start as prerender when requested', () => {
         win.AMP.attachShadowDoc(hostElement, importDoc, docUrl, {
           'visibilityState': 'prerender',
         });
-        expect(ampdoc.getVisibilityState()).to.equal('prerender');
+        const viewer = getServiceForDoc(ampdoc, 'viewer');
+        expect(viewer.getVisibilityState()).to.equal('prerender');
       });
 
       it('should expose visibility method', () => {
         const amp = win.AMP.attachShadowDoc(hostElement, importDoc, docUrl);
+        const viewer = getServiceForDoc(ampdoc, 'viewer');
         expect(amp.setVisibilityState).to.be.a('function');
-        expect(ampdoc.getVisibilityState()).to.equal('visible');
+        expect(viewer.getVisibilityState()).to.equal('visible');
 
         amp.setVisibilityState('inactive');
-        expect(ampdoc.getVisibilityState()).to.equal('inactive');
+        expect(viewer.getVisibilityState()).to.equal('inactive');
       });
 
       it('should expose close method and dispose services', () => {
         const amp = win.AMP.attachShadowDoc(hostElement, importDoc, docUrl);
         const viewer = getServiceForDoc(ampdoc, 'viewer');
         expect(amp.close).to.be.a('function');
-        expect(ampdoc.getVisibilityState()).to.equal('visible');
+        expect(viewer.getVisibilityState()).to.equal('visible');
 
         viewer.dispose = sandbox.spy();
         amp.close();
-        expect(ampdoc.getVisibilityState()).to.equal('inactive');
+        expect(viewer.getVisibilityState()).to.equal('inactive');
         expect(viewer.dispose).to.be.calledOnce;
       });
 
@@ -1731,7 +1734,8 @@ describes.realWin(
           writer = shadowDoc.writer;
           writer.write('<body>');
           return ampdoc.waitForBodyOpen().then(() => {
-            expect(ampdoc.getVisibilityState()).to.equal('visible');
+            const viewer = getServiceForDoc(ampdoc, 'viewer');
+            expect(viewer.getVisibilityState()).to.equal('visible');
           });
         });
 
@@ -1742,7 +1746,8 @@ describes.realWin(
           writer = shadowDoc.writer;
           writer.write('<body>');
           return ampdoc.waitForBodyOpen().then(() => {
-            expect(ampdoc.getVisibilityState()).to.equal('prerender');
+            const viewer = getServiceForDoc(ampdoc, 'viewer');
+            expect(viewer.getVisibilityState()).to.equal('prerender');
           });
         });
 
@@ -1751,11 +1756,12 @@ describes.realWin(
           writer = shadowDoc.writer;
           writer.write('<body>');
           return ampdoc.waitForBodyOpen().then(() => {
+            const viewer = getServiceForDoc(ampdoc, 'viewer');
             expect(shadowDoc.setVisibilityState).to.be.a('function');
-            expect(ampdoc.getVisibilityState()).to.equal('visible');
+            expect(viewer.getVisibilityState()).to.equal('visible');
 
             shadowDoc.setVisibilityState('inactive');
-            expect(ampdoc.getVisibilityState()).to.equal('inactive');
+            expect(viewer.getVisibilityState()).to.equal('inactive');
           });
         });
 
@@ -1766,11 +1772,11 @@ describes.realWin(
           return ampdoc.waitForBodyOpen().then(() => {
             const viewer = getServiceForDoc(ampdoc, 'viewer');
             expect(shadowDoc.close).to.be.a('function');
-            expect(ampdoc.getVisibilityState()).to.equal('visible');
+            expect(viewer.getVisibilityState()).to.equal('visible');
 
             viewer.dispose = sandbox.spy();
             shadowDoc.close();
-            expect(ampdoc.getVisibilityState()).to.equal('inactive');
+            expect(viewer.getVisibilityState()).to.equal('inactive');
             expect(viewer.dispose).to.be.calledOnce;
           });
         });

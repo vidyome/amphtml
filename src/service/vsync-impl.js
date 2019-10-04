@@ -132,15 +132,21 @@ export class Vsync {
       FRAME_TIME * 2.5
     );
 
+    /** @private {?./viewer-interface.ViewerInterface} */
+    this.singleDocViewer_ = null;
+
     // When the document changes visibility, vsync has to reschedule the queue
     // processing.
     const boundOnVisibilityChanged = this.onVisibilityChanged_.bind(this);
     if (this.ampdocService_.isSingleDoc()) {
       // In a single-doc mode, the visibility of the doc == global visibility.
       // Thus, it's more efficient to only listen to it once.
-      this.ampdocService_
-        .getSingleDoc()
-        .onVisibilityChanged(boundOnVisibilityChanged);
+      Services.viewerPromiseForDoc(this.ampdocService_.getSingleDoc()).then(
+        viewer => {
+          this.singleDocViewer_ = viewer;
+          viewer.onVisibilityChanged(boundOnVisibilityChanged);
+        }
+      );
     } else {
       // In multi-doc mode, we track separately the global visibility and
       // per-doc visibility when necessary.
@@ -274,14 +280,14 @@ export class Vsync {
     }
 
     // Single doc: animations allowed when single doc is visible.
-    if (this.ampdocService_.isSingleDoc()) {
-      return this.ampdocService_.getSingleDoc().isVisible();
+    if (this.singleDocViewer_) {
+      return this.singleDocViewer_.isVisible();
     }
 
     // Multi-doc: animations depend on the state of the relevant doc.
     if (opt_contextNode) {
       const ampdoc = this.ampdocService_.getAmpDocIfAvailable(opt_contextNode);
-      return !ampdoc || ampdoc.isVisible();
+      return !ampdoc || Services.viewerForDoc(ampdoc).isVisible();
     }
 
     return true;

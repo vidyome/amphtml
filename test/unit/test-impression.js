@@ -29,7 +29,6 @@ import {user} from '../../src/log';
 
 describe('impression', () => {
   let sandbox;
-  let ampdoc;
   let viewer;
   let xhr;
   let isTrustedViewer;
@@ -38,7 +37,6 @@ describe('impression', () => {
 
   beforeEach(() => {
     sandbox = sinon.sandbox;
-    ampdoc = Services.ampdoc(window.document);
     viewer = Services.viewerForDoc(window.document);
     sandbox.stub(viewer, 'getParam');
     sandbox.stub(viewer, 'hasCapability');
@@ -53,7 +51,7 @@ describe('impression', () => {
         },
       })
     );
-    sandbox.stub(ampdoc, 'whenFirstVisible').returns(Promise.resolve());
+    sandbox.stub(viewer, 'whenFirstVisible').returns(Promise.resolve());
     isTrustedViewer = false;
     sandbox.stub(viewer, 'isTrustedViewer').callsFake(() => {
       return Promise.resolve(isTrustedViewer);

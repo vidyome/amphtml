@@ -53,7 +53,6 @@ export function getContextMetadata(
     locationHref = parentWindow.parent.location.href;
   }
 
-  const ampdoc = Services.ampdoc(element);
   const docInfo = Services.documentInfoForDoc(element);
   const viewer = Services.viewerForDoc(element);
   const referrer = viewer.getUnconfirmedReferrerUrl();
@@ -86,7 +85,7 @@ export function getContextMetadata(
     'tagName': element.tagName,
     'mode': getModeObject(),
     'canary': isCanary(parentWindow),
-    'hidden': !ampdoc.isVisible(),
+    'hidden': !viewer.isVisible(),
     'initialLayoutRect': layoutRect
       ? {
           'left': layoutRect.left,

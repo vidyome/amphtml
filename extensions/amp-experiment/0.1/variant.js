@@ -80,7 +80,8 @@ export function allocateVariant(ampdoc, experimentName, config) {
   validateConfig(config);
 
   // Variant can be overridden from URL fragment.
-  const override = ampdoc.getParam(ATTR_PREFIX + experimentName);
+  const viewer = Services.viewerForDoc(ampdoc);
+  const override = viewer.getParam(ATTR_PREFIX + experimentName);
   if (override && hasOwn(config['variants'], override)) {
     return Promise.resolve(override);
   }

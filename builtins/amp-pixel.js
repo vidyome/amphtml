@@ -65,9 +65,8 @@ export class AmpPixel extends BaseElement {
       return;
     }
     // Trigger, but only when visible.
-    this.getAmpDoc()
-      .whenFirstVisible()
-      .then(this.trigger_.bind(this));
+    const viewer = Services.viewerForDoc(this.getAmpDoc());
+    viewer.whenFirstVisible().then(this.trigger_.bind(this));
   }
 
   /**

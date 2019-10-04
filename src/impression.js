@@ -186,8 +186,7 @@ export function isTrustedReferrer(referrer) {
  * @return {!Promise}
  */
 function handleClickUrl(win) {
-  const ampdoc = Services.ampdoc(win.document.documentElement);
-  const viewer = Services.viewerForDoc(ampdoc);
+  const viewer = Services.viewerForDoc(win.document.documentElement);
 
   /** @const {?string} */
   const clickUrl = viewer.getParam('click');
@@ -212,7 +211,7 @@ function handleClickUrl(win) {
   }
 
   // TODO(@zhouyx) need test with a real response.
-  return ampdoc
+  return viewer
     .whenFirstVisible()
     .then(() => {
       return invoke(win, dev().assertString(clickUrl));

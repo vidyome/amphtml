@@ -186,7 +186,8 @@ describes.repeated(
           };
           sandbox.spy(xhr, 'fetchJson');
 
-          whenVisible = sandbox.stub(env.ampdoc, 'whenFirstVisible');
+          const viewer = Services.viewerForDoc(env.ampdoc);
+          whenVisible = sandbox.stub(viewer, 'whenFirstVisible');
           whenVisible.returns(Promise.resolve());
         });
 

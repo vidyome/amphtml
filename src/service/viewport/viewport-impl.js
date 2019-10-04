@@ -161,7 +161,7 @@ export class ViewportImpl {
 
     /** @private {boolean} */
     this.visible_ = false;
-    this.ampdoc.onVisibilityChanged(this.updateVisibility_.bind(this));
+    this.viewer_.onVisibilityChanged(this.updateVisibility_.bind(this));
     this.updateVisibility_();
 
     // Top-level mode classes.
@@ -215,7 +215,7 @@ export class ViewportImpl {
 
   /** @private */
   updateVisibility_() {
-    const visible = this.ampdoc.isVisible();
+    const visible = this.viewer_.isVisible();
     if (visible != this.visible_) {
       this.visible_ = visible;
       if (visible) {
@@ -273,7 +273,7 @@ export class ViewportImpl {
     this.size_ = this.binding_.getSize();
     if (this.size_.width == 0 || this.size_.height == 0) {
       // Only report when the visibility is "visible" or "prerender".
-      const visibilityState = this.ampdoc.getVisibilityState();
+      const visibilityState = this.viewer_.getVisibilityState();
       if (
         visibilityState == VisibilityState.PRERENDER ||
         visibilityState == VisibilityState.VISIBLE

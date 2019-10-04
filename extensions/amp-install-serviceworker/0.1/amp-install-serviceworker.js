@@ -124,7 +124,7 @@ export class AmpInstallServiceWorker extends AMP.BaseElement {
   whenLoadedAndVisiblePromise_() {
     return Promise.all([
       this.loadPromise(this.win),
-      this.getAmpDoc().whenFirstVisible(),
+      Services.viewerForDoc(this.getAmpDoc()).whenFirstVisible(),
     ]);
   }
 

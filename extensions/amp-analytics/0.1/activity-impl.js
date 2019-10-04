@@ -115,7 +115,7 @@ class ActivityHistory {
 
 /**
  * Array of event types which will be listened for on the document to indicate
- * activity. Other activities are also observed on the AmpDoc and Viewport
+ * activity. Other activities are also observed on the Viewer and Viewport
  * objects. See {@link setUpActivityListeners_} for listener implementation.
  * @private @const {Array<string>}
  */
@@ -138,8 +138,8 @@ export class Activity {
   /**
    * Activity tracks basic user activity on the page.
    *  - Listeners are not registered on the activity event types until the
-   *    AmpDoc's `whenFirstVisible` is resolved.
-   *  - When the `whenFirstVisible` of AmpDoc is resolved, a first activity
+   *    Viewer's `whenFirstVisible` is resolved.
+   *  - When the `whenFirstVisible` of Viewer is resolved, a first activity
    *    is recorded.
    *  - The first activity in any second causes all other activities to be
    *    ignored. This is similar to debounce functionality since some events
@@ -189,10 +189,13 @@ export class Activity {
     /** @private @const {!ActivityHistory} */
     this.activityHistory_ = new ActivityHistory();
 
+    /** @private @const {!../../../src/service/viewer-interface.ViewerInterface} */
+    this.viewer_ = Services.viewerForDoc(this.ampdoc);
+
     /** @private @const {!../../../src/service/viewport/viewport-interface.ViewportInterface} */
     this.viewport_ = Services.viewportForDoc(this.ampdoc);
 
-    this.ampdoc.whenFirstVisible().then(this.start_.bind(this));
+    this.viewer_.whenFirstVisible().then(this.start_.bind(this));
   }
 
   /** @private */
@@ -239,7 +242,7 @@ export class Activity {
     }
 
     this.unlistenFuncs_.push(
-      this.ampdoc.onVisibilityChanged(this.boundHandleVisibilityChange_)
+      this.viewer_.onVisibilityChanged(this.boundHandleVisibilityChange_)
     );
 
     // Viewport.onScroll does not return an unlisten function.
@@ -290,7 +293,7 @@ export class Activity {
 
   /** @private */
   handleVisibilityChange_() {
-    if (this.ampdoc.isVisible()) {
+    if (this.viewer_.isVisible()) {
       this.handleActivity_();
     } else {
       this.handleInactive_();

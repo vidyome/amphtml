@@ -186,7 +186,7 @@ class Cid {
     );
     return consent
       .then(() => {
-        return this.ampdoc.whenFirstVisible();
+        return Services.viewerForDoc(this.ampdoc).whenFirstVisible();
       })
       .then(() => {
         // Check if user has globally opted out of CID, we do this after

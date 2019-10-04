@@ -719,7 +719,7 @@ class VideoEntry {
    * @private
    */
   loadedVideoVisibilityChanged_() {
-    if (!this.ampdoc_.isVisible()) {
+    if (!Services.viewerForDoc(this.ampdoc_).isVisible()) {
       return;
     }
     this.supportsAutoplay_().then(supportsAutoplay => {

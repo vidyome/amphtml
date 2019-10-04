@@ -28,7 +28,6 @@ import {toggleExperiment} from '../../../../src/experiments';
 
 describe('amp-ad-xorigin-iframe-handler', () => {
   let sandbox;
-  let ampdoc;
   let adImpl;
   let signals;
   let renderStartedSpy;
@@ -39,7 +38,7 @@ describe('amp-ad-xorigin-iframe-handler', () => {
   beforeEach(() => {
     sandbox = sinon.sandbox;
     const ampdocService = Services.ampdocServiceFor(window);
-    ampdoc = ampdocService.getSingleDoc();
+    const ampdoc = ampdocService.getSingleDoc();
     const adElement = document.createElement('container-element');
     adElement.getAmpDoc = () => ampdoc;
     adElement.isBuilt = () => {
@@ -298,7 +297,9 @@ describe('amp-ad-xorigin-iframe-handler', () => {
     });
 
     it('should be able to use embed-state API', () => {
-      sandbox./*OK*/ stub(ampdoc, 'isVisible').returns(true);
+      sandbox
+        ./*OK*/ stub(iframeHandler.viewer_, 'isVisible')
+        .callsFake(() => true);
       iframe.postMessageToParent({
         type: 'send-embed-state',
         sentinel: 'amp3ptest' + testIndex,

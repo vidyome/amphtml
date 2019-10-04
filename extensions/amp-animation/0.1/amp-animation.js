@@ -141,9 +141,10 @@ export class AmpAnimation extends AMP.BaseElement {
       });
       listen(this.embed_.win, 'resize', () => this.onResize_());
     } else {
-      this.setVisible_(ampdoc.isVisible());
-      ampdoc.onVisibilityChanged(() => {
-        this.setVisible_(ampdoc.isVisible());
+      const viewer = Services.viewerForDoc(ampdoc);
+      this.setVisible_(viewer.isVisible());
+      viewer.onVisibilityChanged(() => {
+        this.setVisible_(viewer.isVisible());
       });
       this.getViewport().onResize(e => {
         if (e.relayoutAll) {

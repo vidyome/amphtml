@@ -201,7 +201,7 @@ class AmpAddThis extends AMP.BaseElement {
       const viewer = Services.viewerForDoc(ampDoc);
       const loc = parseUrlDeprecated(this.canonicalUrl_);
 
-      ampDoc
+      viewer
         .whenFirstVisible()
         .then(() => viewer.getReferrerUrl())
         .then(referrer => {

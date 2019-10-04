@@ -61,7 +61,8 @@ export class AmpAutoAds extends AMP.BaseElement {
       AD_TAG
     );
 
-    const whenVisible = this.getAmpDoc().whenFirstVisible();
+    const viewer = Services.viewerForDoc(this.getAmpDoc());
+    const whenVisible = viewer.whenFirstVisible();
     const responsiveSizingBranch = this.getUseResponsiveForResponsiveExperimentBranch(
       adNetwork.isResponsiveEnabled()
     );

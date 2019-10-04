@@ -76,7 +76,7 @@ export class AmpSmartlinks extends AMP.BaseElement {
       .then(() => viewer.getReferrerUrl())
       .then(referrer => {
         this.referrer_ = referrer;
-        this.ampDoc_.whenFirstVisible().then(() => {
+        viewer.whenFirstVisible().then(() => {
           this.runSmartlinks_();
         });
       });

@@ -78,6 +78,9 @@ export class AmpAdXOriginIframeHandler {
     /** @private {!Array<!Function>} functions to unregister listeners */
     this.unlisteners_ = [];
 
+    /** @private @const {!../../../src/service/viewer-interface.ViewerInterface} */
+    this.viewer_ = Services.viewerForDoc(this.baseInstance_.getAmpDoc());
+
     /** @private @const {!../../../src/service/viewport/viewport-interface.ViewportInterface} */
     this.viewport_ = Services.viewportForDoc(this.baseInstance_.getAmpDoc());
 
@@ -180,7 +183,7 @@ export class AmpAdXOriginIframeHandler {
     );
 
     this.unlisteners_.push(
-      this.baseInstance_.getAmpDoc().onVisibilityChanged(() => {
+      this.viewer_.onVisibilityChanged(() => {
         this.sendEmbedInfo_(this.baseInstance_.isInViewport());
       })
     );
@@ -490,7 +493,7 @@ export class AmpAdXOriginIframeHandler {
       'embed-state',
       dict({
         'inViewport': inViewport,
-        'pageHidden': !this.baseInstance_.getAmpDoc().isVisible(),
+        'pageHidden': !this.viewer_.isVisible(),
       })
     );
   }

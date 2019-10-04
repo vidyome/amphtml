@@ -200,10 +200,10 @@ export function getViewerInterceptResponse(win, ampdocSingle, input, init) {
     return Promise.resolve();
   }
 
+  const viewer = Services.viewerForDoc(ampdocSingle);
   const whenUnblocked = init.prerenderSafe
     ? Promise.resolve()
-    : ampdocSingle.whenFirstVisible();
-  const viewer = Services.viewerForDoc(ampdocSingle);
+    : viewer.whenFirstVisible();
   const urlIsProxy = isProxyOrigin(input);
   const viewerCanIntercept = viewer.hasCapability('xhrInterceptor');
   const interceptorDisabledForLocalDev =

@@ -285,7 +285,7 @@ export class SubscriptionService {
     // page to become visible, all others wait for whenFirstVisible()
     const visiblePromise = subscriptionPlatform.isPrerenderSafe()
       ? Promise.resolve()
-      : this.ampdoc_.whenFirstVisible();
+      : this.viewer_.whenFirstVisible();
     return visiblePromise.then(() => {
       return this.timer_
         .timeoutPromise(timeout, subscriptionPlatform.getEntitlements())

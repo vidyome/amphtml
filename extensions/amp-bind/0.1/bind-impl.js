@@ -200,7 +200,7 @@ export class Bind {
      * Resolved when the service finishes scanning the document for bindings.
      * @const @private {Promise}
      */
-    this.initializePromise_ = ampdoc
+    this.initializePromise_ = this.viewer_
       .whenFirstVisible()
       .then(() => {
         if (opt_win) {

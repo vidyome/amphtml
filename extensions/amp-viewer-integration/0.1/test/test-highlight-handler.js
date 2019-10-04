@@ -344,7 +344,7 @@ describes.realWin(
         'setScrollTop'
       );
       sandbox
-        .stub(ampdoc, 'getVisibilityState')
+        .stub(Services.viewerForDoc(ampdoc), 'getVisibilityState')
         .returns(VisibilityState.PRERENDER);
 
       new HighlightHandler(ampdoc, {sentences: ['amp', 'highlight']});

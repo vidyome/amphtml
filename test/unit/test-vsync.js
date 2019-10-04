@@ -22,6 +22,8 @@ import {installTimerService} from '../../src/service/timer-impl';
 describes.sandboxed('vsync', {}, () => {
   let clock;
   let win;
+  let viewer;
+  let viewerVisibilityChangedHandler;
   let docState;
   let docVisibilityHandler;
   let contextNode;
@@ -48,6 +50,13 @@ describes.sandboxed('vsync', {}, () => {
 
     installTimerService(win);
 
+    viewerVisibilityChangedHandler = undefined;
+    viewer = {
+      isVisible: () => true,
+      onVisibilityChanged: handler =>
+        (viewerVisibilityChangedHandler = handler),
+    };
+
     docVisibilityHandler = undefined;
     docState = {
       isHidden: () => false,
@@ -65,21 +74,21 @@ describes.sandboxed('vsync', {}, () => {
 
   describe('single-doc', () => {
     let ampdoc;
-    let isVisibleStub;
-    let onVisibilityChangedStub;
     let vsync;
 
     beforeEach(() => {
       installDocService(win, /* isSingleDoc */ true);
       ampdoc = Services.ampdocServiceFor(win).getSingleDoc();
-      isVisibleStub = sandbox.stub(ampdoc, 'isVisible').returns(true);
-      onVisibilityChangedStub = sandbox.stub(ampdoc, 'onVisibilityChanged');
+      win.__AMP_SERVICES['viewer'] = {obj: viewer};
       vsync = new Vsync(win);
+      return Services.viewerPromiseForDoc(ampdoc);
     });
+
+    afterEach(() => {});
 
     it('should init correctly', () => {
       expect(vsync.canAnimate(contextNode)).to.be.true;
-      expect(onVisibilityChangedStub).to.be.calledOnce;
+      expect(viewerVisibilityChangedHandler).to.exist;
       expect(docVisibilityHandler).to.not.exist;
     });
 
@@ -261,7 +270,7 @@ describes.sandboxed('vsync', {}, () => {
     it('should schedule via animation frames when doc is visible', () => {
       let rafHandler;
       vsync.raf_ = handler => (rafHandler = handler);
-      isVisibleStub.returns(true);
+      viewer.isVisible = () => true;
 
       let result = '';
       vsync.run({
@@ -287,7 +296,7 @@ describes.sandboxed('vsync', {}, () => {
     it('should schedule via timer frames when doc is not visible', () => {
       let rafHandler;
       vsync.raf_ = handler => (rafHandler = handler);
-      isVisibleStub.returns(false);
+      viewer.isVisible = () => false;
 
       let result = '';
       vsync.run({
@@ -313,7 +322,7 @@ describes.sandboxed('vsync', {}, () => {
       vsync.raf_ = function() {
         // intentionally empty
       };
-      isVisibleStub.returns(true);
+      viewer.isVisible = () => true;
 
       let result = '';
       vsync.run({
@@ -346,7 +355,7 @@ describes.sandboxed('vsync', {}, () => {
     it('should re-schedule when doc goes invisible', () => {
       let rafHandler;
       vsync.raf_ = handler => (rafHandler = handler);
-      isVisibleStub.returns(true);
+      viewer.isVisible = () => true;
 
       let result = '';
       vsync.run({
@@ -360,8 +369,8 @@ describes.sandboxed('vsync', {}, () => {
       expect(rafHandler).to.exist;
       expect(vsync.invisiblePass_.isPending()).to.be.false;
 
-      isVisibleStub.returns(false);
-      onVisibilityChangedStub.args[0][0]();
+      viewer.isVisible = () => false;
+      viewerVisibilityChangedHandler();
 
       expect(vsync.tasks_).to.have.length(1);
       expect(vsync.scheduled_).to.be.true;
@@ -377,7 +386,7 @@ describes.sandboxed('vsync', {}, () => {
     it('should re-schedule when doc goes visible', () => {
       let rafHandler;
       vsync.raf_ = handler => (rafHandler = handler);
-      isVisibleStub.returns(false);
+      viewer.isVisible = () => false;
 
       let result = '';
       vsync.run({
@@ -391,8 +400,8 @@ describes.sandboxed('vsync', {}, () => {
       expect(rafHandler).to.be.undefined;
       expect(vsync.invisiblePass_.isPending()).to.be.true;
 
-      isVisibleStub.returns(true);
-      onVisibilityChangedStub.args[0][0]();
+      viewer.isVisible = () => true;
+      viewerVisibilityChangedHandler();
 
       expect(vsync.tasks_).to.have.length(1);
       expect(vsync.scheduled_).to.be.true;
@@ -407,15 +416,15 @@ describes.sandboxed('vsync', {}, () => {
     it('should NOT re-schedule when no tasks pending', () => {
       let rafHandler;
       vsync.raf_ = handler => (rafHandler = handler);
-      isVisibleStub.returns(true);
+      viewer.isVisible = () => true;
 
       expect(vsync.tasks_).to.have.length(0);
       expect(vsync.scheduled_).to.be.false;
       expect(rafHandler).to.be.undefined;
       expect(vsync.invisiblePass_.isPending()).to.be.false;
 
-      isVisibleStub.returns(false);
-      onVisibilityChangedStub.args[0][0]();
+      viewer.isVisible = () => false;
+      viewerVisibilityChangedHandler();
 
       expect(vsync.tasks_).to.have.length(0);
       expect(vsync.scheduled_).to.be.false;
@@ -426,7 +435,7 @@ describes.sandboxed('vsync', {}, () => {
     it('should run anim task when visible', () => {
       let rafHandler;
       vsync.raf_ = handler => (rafHandler = handler);
-      isVisibleStub.returns(true);
+      viewer.isVisible = () => true;
 
       let result = '';
       const res = vsync.runAnim(contextNode, {
@@ -446,7 +455,7 @@ describes.sandboxed('vsync', {}, () => {
     it('should create and run anim task when visible', () => {
       let rafHandler;
       vsync.raf_ = handler => (rafHandler = handler);
-      isVisibleStub.returns(true);
+      viewer.isVisible = () => true;
 
       let result = '';
       const task = vsync.createAnimTask(contextNode, {
@@ -467,7 +476,7 @@ describes.sandboxed('vsync', {}, () => {
     it('should NOT run anim task when invisible', () => {
       let rafHandler;
       vsync.raf_ = handler => (rafHandler = handler);
-      isVisibleStub.returns(false);
+      viewer.isVisible = () => false;
 
       let result = ''; // eslint-disable-line no-unused-vars
       const res = vsync.runAnim(contextNode, {
@@ -484,7 +493,7 @@ describes.sandboxed('vsync', {}, () => {
     it('should create but NOT run anim task when invisible', () => {
       let rafHandler;
       vsync.raf_ = handler => (rafHandler = handler);
-      isVisibleStub.returns(false);
+      viewer.isVisible = () => false;
 
       let result = ''; // eslint-disable-line no-unused-vars
       const task = vsync.createAnimTask(contextNode, {
@@ -500,7 +509,7 @@ describes.sandboxed('vsync', {}, () => {
     });
 
     it('should reject mutate series when invisible', () => {
-      isVisibleStub.returns(false);
+      viewer.isVisible = () => false;
       const mutatorSpy = sandbox.spy();
 
       const promise = vsync.runAnimMutateSeries(contextNode, mutatorSpy);
@@ -553,8 +562,6 @@ describes.sandboxed('vsync', {}, () => {
   describe('multi-doc', () => {
     let root;
     let ampdoc;
-    let isVisibleStub;
-    let onVisibilityChangedStub;
     let vsync;
 
     beforeEach(() => {
@@ -562,8 +569,8 @@ describes.sandboxed('vsync', {}, () => {
       root = document.createElement('i-amphtml-shadow-root');
       document.body.appendChild(root);
       ampdoc = new AmpDocShadow(win, 'https://acme.org/', root);
-      isVisibleStub = sandbox.stub(ampdoc, 'isVisible').returns(true);
-      onVisibilityChangedStub = sandbox.stub(ampdoc, 'onVisibilityChanged');
+      ampdoc.__AMP_SERVICES = {};
+      ampdoc.__AMP_SERVICES['viewer'] = {obj: viewer};
       contextNode.ampdoc_ = ampdoc;
       vsync = new Vsync(win);
     });
@@ -575,13 +582,13 @@ describes.sandboxed('vsync', {}, () => {
     it('should init correctly', () => {
       expect(vsync.canAnimate(contextNode)).to.be.true;
       expect(docVisibilityHandler).to.exist;
-      expect(onVisibilityChangedStub).to.not.be.called;
+      expect(viewerVisibilityChangedHandler).to.not.exist;
     });
 
     it('should schedule via animation frames when doc is visible', () => {
       let rafHandler;
       vsync.raf_ = handler => (rafHandler = handler);
-      isVisibleStub.returns(true);
+      viewer.isVisible = () => true;
 
       let result = '';
       vsync.run({
