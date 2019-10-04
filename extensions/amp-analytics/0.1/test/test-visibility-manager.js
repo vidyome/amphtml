@@ -19,6 +19,7 @@ import {
   IntersectionObserverPolyfill,
   nativeIntersectionObserverSupported,
 } from '../../../../src/intersection-observer-polyfill';
+import {Services} from '../../../../src/services';
 import {
   VisibilityManagerForDoc,
   VisibilityManagerForEmbed,
@@ -1052,6 +1053,8 @@ describes.realWin('VisibilityManager integrated', {amp: true}, env => {
       eventResolver2 = resolve;
     });
 
+    const docState = Services.globalDocumentStateFor(win);
+    sandbox.stub(docState, 'isHidden').callsFake(() => false);
     sandbox.stub(ampdoc, 'getFirstVisibleTime').callsFake(() => startTime);
 
     ampElement = doc.createElement('amp-img');
