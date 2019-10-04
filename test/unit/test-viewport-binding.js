@@ -18,6 +18,7 @@ import {Services} from '../../src/services';
 import {ViewportBindingIosEmbedWrapper_} from '../../src/service/viewport/viewport-binding-ios-embed-wrapper';
 import {ViewportBindingNatural_} from '../../src/service/viewport/viewport-binding-natural';
 import {installDocService} from '../../src/service/ampdoc-impl';
+import {installGlobalDocumentStateService} from '../../src/service/document-state';
 import {installPlatformService} from '../../src/service/platform-impl';
 import {installVsyncService} from '../../src/service/vsync-impl';
 import {toggleExperiment} from '../../src/experiments';
@@ -46,6 +47,7 @@ describes.realWin('ViewportBindingNatural', {ampCss: true}, env => {
     installPlatformService(win);
     installVsyncService(win);
     installDocService(win, /* isSingleDoc */ true);
+    installGlobalDocumentStateService(win);
     ampdoc = Services.ampdocServiceFor(win).getSingleDoc();
     binding = new ViewportBindingNatural_(ampdoc);
     binding.connect();
@@ -242,6 +244,7 @@ describes.realWin('ViewportBindingNatural on iOS', {ampCss: true}, env => {
     installPlatformService(win);
     installVsyncService(win);
     installDocService(win, /* isSingleDoc */ true);
+    installGlobalDocumentStateService(win);
     ampdoc = Services.ampdocServiceFor(win).getSingleDoc();
     sandbox.stub(Services.platformFor(win), 'isIos').returns(true);
     binding = new ViewportBindingNatural_(ampdoc);
@@ -278,6 +281,7 @@ describes.realWin('ViewportBindingIosEmbedWrapper', {ampCss: true}, env => {
     child.textContent = 'test';
     win.document.body.appendChild(child);
     installDocService(win, /* isSingleDoc */ true);
+    installGlobalDocumentStateService(win);
     installVsyncService(win);
     installPlatformService(win);
     vsync = Services.vsyncFor(win);

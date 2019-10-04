@@ -20,6 +20,7 @@ import {installBatchedXhrService} from './batched-xhr-impl';
 import {installCidService} from './cid-impl';
 import {installCryptoService} from './crypto-impl';
 import {installDocumentInfoServiceForDoc} from './document-info-impl';
+import {installGlobalDocumentStateService} from './document-state';
 import {installGlobalNavigationHandlerForDoc} from './navigation';
 import {installGlobalSubmitListenerForDoc} from '../document-submit';
 import {installHiddenObserverForDoc} from './hidden-observer-impl';
@@ -61,6 +62,7 @@ export function installBuiltinElements(win) {
 export function installRuntimeServices(global) {
   installCryptoService(global);
   installBatchedXhrService(global);
+  installGlobalDocumentStateService(global);
   installPlatformService(global);
   installTemplatesService(global);
   installTimerService(global);

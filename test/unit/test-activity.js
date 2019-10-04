@@ -18,6 +18,7 @@ import {AmpDocSingle} from '../../src/service/ampdoc-impl';
 import {Observable} from '../../src/observable';
 import {Services} from '../../src/services';
 import {installActivityServiceForTesting} from '../../extensions/amp-analytics/0.1/activity-impl';
+import {installGlobalDocumentStateService} from '../../src/service/document-state';
 import {installPlatformService} from '../../src/service/platform-impl';
 import {installTimerService} from '../../src/service/timer-impl';
 import {installViewerServiceForDoc} from '../../src/service/viewer-impl';
@@ -101,6 +102,7 @@ describe('Activity getTotalEngagedTime', () => {
       },
     };
 
+    installGlobalDocumentStateService(fakeWin);
     installTimerService(fakeWin);
     installVsyncService(fakeWin);
     installPlatformService(fakeWin);
@@ -316,6 +318,7 @@ describe('Activity getIncrementalEngagedTime', () => {
       },
     };
 
+    installGlobalDocumentStateService(fakeWin);
     installTimerService(fakeWin);
     installVsyncService(fakeWin);
     installPlatformService(fakeWin);
