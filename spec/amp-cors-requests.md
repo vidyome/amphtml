@@ -146,9 +146,9 @@ For example, endpoints should allow requests from:
 - Cloudflare AMP Cache: `https://<publisher's domain>.amp.cloudflare.com`
 
 Read on: For information on AMP Cache URL formats, see these resources: <ul>
-    <li> [Google AMP Cache Overview](https://developers.google.com/amp/cache/overview)
-    <li> [Cloudflare AMP Cache](https://amp.cloudflare.com/)
-  </ul>
+<li> [Google AMP Cache Overview](https://developers.google.com/amp/cache/overview)
+<li> [Cloudflare AMP Cache](https://amp.cloudflare.com/)
+</ul>
 
 #### 2) Allow same-origin requests
 
