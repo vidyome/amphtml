@@ -114,7 +114,7 @@ What is allowed, what isn't.
 
 ## Attributes
 
-### attribute-name
+### `attribute-name`
 
 Description of attribute. Use cases for this attribute.
 
