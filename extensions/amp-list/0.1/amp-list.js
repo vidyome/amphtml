@@ -348,8 +348,9 @@ export class AmpList extends AMP.BaseElement {
    *
    * @param {string} src
    * @return {boolean}
+   * @private
    */
-  isAmpStateSrc(src) {
+  isAmpStateSrc_(src) {
     return (
       isExperimentOn(this.win, 'amp-list-init-from-state') &&
       startsWith(src, 'amp-state:')
@@ -359,8 +360,9 @@ export class AmpList extends AMP.BaseElement {
   /**
    * @param {!Array|!Object|string} src
    * @return {!Promise}
+   * @private
    */
-  renderLocalData(src) {
+  renderLocalData_(src) {
     let dataPromise;
     if (typeof src === 'string') {
       const ampStatePath = src.substring('amp-state:'.length);
@@ -411,8 +413,8 @@ export class AmpList extends AMP.BaseElement {
     const src = mutations['src'];
     const state = /** @type {!JsonObject} */ (mutations)['state'];
     if (src !== undefined) {
-      if (typeof src === 'object' || this.isAmpStateSrc(src)) {
-        promise = this.renderLocalData(/** @type {!Object} */ (src));
+      if (typeof src === 'object' || this.isAmpStateSrc_(src)) {
+        promise = this.renderLocalData_(/** @type {!Object} */ (src));
       } else if (typeof src === 'string') {
         // Defer to fetch in layoutCallback() before first layout.
         if (this.layoutCompleted_) {
@@ -424,7 +426,7 @@ export class AmpList extends AMP.BaseElement {
       }
     } else if (state !== undefined) {
       user().error(TAG, '[state] is deprecated, please use [src] instead.');
-      promise = this.renderLocalData(state);
+      promise = this.renderLocalData_(state);
     }
 
     const isLayoutContainer = mutations['is-layout-container'];
@@ -600,8 +602,8 @@ export class AmpList extends AMP.BaseElement {
     const elementSrc = this.element.getAttribute('src');
     if (!elementSrc) {
       return Promise.resolve();
-    } else if (this.isAmpStateSrc(elementSrc)) {
-      return this.renderLocalData(elementSrc);
+    } else if (this.isAmpStateSrc_(elementSrc)) {
+      return this.renderLocalData_(elementSrc);
     }
 
     let fetch;
