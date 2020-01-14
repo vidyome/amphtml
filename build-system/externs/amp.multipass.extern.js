@@ -21,6 +21,9 @@
 var SomeBaseElementLikeClass;
 SomeBaseElementLikeClass.prototype.layout_;
 
+/** @type {number} */
+SomeBaseElementLikeClass.prototype.layoutWidth_;
+
 /** @type {boolean} */
 SomeBaseElementLikeClass.prototype.inViewport_;
 
